@@ -1,0 +1,63 @@
+from a google note, on mobile
+
+2:17 PST, 09/19/2020
+
+===============================================================================
+
+eventual video-viewer component
+
+then, diagrams? more vehicle UI features?
+
+At what point do we start on the "vehicle" / embedded project?
+
+Where does that project go? It's a client of smooth after all
+
+Should client projects be coupled into smooth? In the repo?
+
+Would that scale to arbitrary users?
+
+The user projects don't need to be in smooth, but the project-integrationc story should be established
+
+An actual project should be using it, downstream
+
+"raven"
+
+It serves as the "first place" services/endpoints get written and tested / vetted, they can be moved into smooth when they're production ready
+
+raven is where the Rust happens.
+
+raven is a quadcopter, from scratch
+
+(smooth) each component should have an icon + blurb, maybe even cartoon mock-up or animation
+
+Bulleted list of features for each? "Try it out?"
+
+smooth use cases, possibly connection diagrams (showing 1:N capabilities, high level!)
+
+^ this might clarify the concept of the entire project
+
+After this, move into defining implementation tasks
+
+needs a splash / loading screen component
+
+in addition to "components", we need smooth app-specific shell and instance
+
+^ root component container, demonstrates allocating components to a real DOM element
+
+how's it hosted? It's not server-side, do we even need any server software? Needs one to so web requests, at least
+
+Docker container or something?
+
+^ good initial dev setup
+
+Makefile?
+
+make deploy easy and fast (what entry-point does it?)
+
+build system to build the deploy tool (Rust?)
+
+rust ssh commander app
+
+start, stop, restart, upgrade (e.g. via internet), deploy, remove
+
+^ same thing used for local dev
