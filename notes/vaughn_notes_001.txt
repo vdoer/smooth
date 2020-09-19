@@ -1,0 +1,172 @@
+vue.js
+terminal and plot in web page using WebGl, tmux-like screen manipulation, ubuntu style workspaces, configurable keybinds
+
+===============================================================================
+
+The above two lines were some notes I jotted down before I was going to go to
+bed, and then I decided to think about and write down some things about a
+project idea that has been incubating in my brain probably since my second
+internship at SpaceX, where I was a part of the first "60-day squad" for a
+new project, "Stage0" (later to become Stage0 and Ops Displays, separately)
+where I prototyped some of the first web-based telemetry viewing and
+commodity (gases, liquids, in tanks controlled by ground systems) + vehicle
+(individual first or second stages, individual [rocket] engines, etc.).
+
+After I wrote those two lines and thought for a minute more, I wrote what's
+below this section.
+
+I have been going through the Rust book thinking about how to get started on
+a new project (all Rust? because of Rust -> WebAssembly, or something like
+that...) and just now was reading some of the Firefox browser API docs after
+they came up when searching WebGL.
+
+WebGL was mentioned in the Rust book "Programming WebAssembly with Rust" and
+also in a video of some guy giving a talk at some Google I/O conference
+(could be something else, didn't bother looking) about how "it's all WebGL
+behind the scenes" plus the book said WebAssembly couldn't do direct DOM 
+manipulation. Hence I was curious if that was still the case (book said it
+could change) and then went down the rabbit hole of looking at totally random
+browser APIs... which led me here, in a way.
+
+took a few hits of weed-vape, too... maybe didn't mention that.
+
+Vaughn - 12:44 AM 09/19/2020
+
+p.s. first earthquake was not too long ago... sketchy
+
+===============================================================================
+
+components:
+- numbered in which they *should* be completed, but organized in the order
+  that they were written
+  - numbers were added after all components written, then this "components"
+    label was added and this was written
+    - some tweaks made to components after this, after thinking this through
+      more
+
+(4) workspace manager
+- initialize on some element, provide the workspace config
+  (keybinds, num spaces, layout, default "thing" to clone and put in
+   new workspace when one is empty)
+- implement the navigation of the main window
+- implement the overlay that appears when navigating (or toggle?)
+- implement some kind of debug / live re-configure interface / menu?
+- typically this would be singleton in a window or single-page app, but
+  that shouldn't be required
+  - when singleton, should probably show overall window cpu/gpu metrics?
+    (where?)
+    maybe *these* metrics should be the first instance of "data" available,
+    then network endpoints come later (probably could do many protocols /
+    transports)
+    - if component dev produced data to some data bus, there would be existing
+      data for plots / story for how data is organized and flows
+
+(5) in-web terminal (with "commanding")
+- initialize in some arbitrary container (may have requirements? how do we
+  error?)
+- emulates file-system (using browser local / session storage?)
+- emulates having commands / default commands, possibly support bash or other
+  shell languages (e.g. not an ssh connection!)
+- configurable (colors, font+size, background, opacity, statusline)
+- Q, multiple terminal instances communicate? (would they need to?)
+- Q, how to write commands (in what lang, javascript? that'd be neat)
+- tab-completion features etc. !
+- no need for a "command" pane, this effectively is that! ("commanding"
+  should be some kind of default command, needs to be a way to connect to a
+  "command" endpoint? to think about commanding think "endpoint is vehicle")
+- workspace manager, other app instances in the workspace possibly commandable
+  - sounds like a bit of two way data flow, via data bus??
+
+(6: main goal of the project, everything else supports this!) plot window
+- starts by prompting to connect to a source (or uses a default? or was
+  spawned with specific params?)
+  - what is a "source"? is it a server or the browser? if it's the browser
+    could use a web worker to run the actual server data cache and connect
+    to the endpoint, managing endpoint connections (sources) could be its own
+    pane
+  - data organization / features / interface(s) to plots
+  - the data-daemon should spawn metrics plots by default (and should have
+    metrics)
+- "modes"
+  - "just view" mode no overlay
+  - pause, rewind, fast forward
+  - channel-view manipulator, select channels (possibly multiple kinds of
+    selections)
+  - show points vs. lines, channel color + opacity
+  - time axis (configurable precision / time display format?)
+  - up to ~two~ n vertical axes
+  - toggle-able and configurable grid lines
+  - configurable background / opacity
+  - configuration menu?
+
+(3) browser data bus
+- can be spawned into a web-worker (should be able to spawn multiple)
+- Q, does browser have syncronization primitives?
+- sources can be external, network endpoints or client-side data producers
+  (e.g. another component!)
+- "channel", value(s) over a key
+  - key, and what's contained pre-negotiated (and restricted)
+    - way to view this configuration / log of events printed to console
+      (separate) component
+- sinks can only be "internal", obvious sinks would be plots and console
+  viewers
+
+(2) console viewer
+- dirt simplest component of all
+- process a queue of messages, messages are text, line-by-line
+- append down, allow scrolling and reseting
+- allow configuration of appearance
+- Q, how does one expose that this console can be written? some kind of console
+  global root variable?
+  - how does the console get written? it's likely a "consumer" of data bus
+- this is potentially just a "general text" / static text reader as well..
+  - that might make initial development easier
+    - probably can start with static (hard-coded) text, get all of the UI
+      features done, then pivot to (more serious) data flow
+  - regular console window's console (has to be written to an additional spot)
+    - should stuff be interactive? that seems too hard (probably not possible)
+
+(1) console logger library (for dev console)
+- just make a better way to `console.log` so that it's clearer who's doing
+  the writing
+- log to file / browser storage / session storage
+  - that'd probably be good so the console viewer can be tested somewhat
+    easily
+    - e.g. version of console viewer that uses that as a source
+      - this is the last feature, then work on console viewer
+- this helps get the project set up, the build system / CI story, documentation
+  and linting / unit testing
+  - having all of this really turns a hobby project into something that could
+    be much more
+- chose overall tech stack carefully!!
+  - HTML frameworks/dependencies? CSS? JavaScript? WebAssembly??
+
+===============================================================================
+
+- Second addendum, the more written out this is or the more formally it can be
+  expressed / written out will make realizing this easier.
+
+- These notes should be turned into something else, like Markdown for a GitHub
+  README.md
+
+- To have all of these components in one repo, need to think about how to
+  organize this sort of mono-repo style.
+
+  - first component might not have to get too crazy with that
+  - need to figure out a general sandboxing / testing environment, for the
+    front-end
+
+To summarize, we should be good to proceed into README-writing. We need
+a repository, idea for a LICENSE to use, and a name...
+
+align / cpu-align...
+human-computer interface... (I should really study this)
+UX / interface-design...
+smooth/flow...
+
+smooth.
+
+Needs some branding. Let's work on that and the README / front-end, project
+structure / think about task tracking and completeness tracking.
+
+===============================================================================
